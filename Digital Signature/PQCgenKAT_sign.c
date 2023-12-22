@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 #include "rng.h"
 #include "api.h"
 
@@ -25,8 +26,11 @@ void	fprintBstr(FILE *fp, char *S, unsigned char *A, unsigned long long L);
 
 char    AlgName[] = "My Alg Name";
 
+clock_t start_kp, end_kp, start_sign, end_sign, start_vrf, end_vrf;
+double cpu_time_used_kp, cpu_time_used_sign, cpu_time_used_vrf;
+
 int
-main()
+main(int argc, char *argv[])
 {
     char                fn_req[32], fn_rsp[32];
     FILE                *fp_req, *fp_rsp;
@@ -39,14 +43,22 @@ main()
     int                 done;
     unsigned char       pk[CRYPTO_PUBLICKEYBYTES], sk[CRYPTO_SECRETKEYBYTES];
     int                 ret_val;
+
+    if (argc != 2) {
+        fprintf(stderr, "Uso: %s parametro1\n", argv[0]);
+        return 1;
+    }
+
+    // Parâmetros fornecidos na linha de comando
+    const char *variant = argv[1];
     
     // Create the REQUEST file
-    sprintf(fn_req, "PQCsignKAT_%d.req", CRYPTO_SECRETKEYBYTES);
+    sprintf(fn_req, "PQCsignKAT.req");
     if ( (fp_req = fopen(fn_req, "w")) == NULL ) {
         printf("Couldn't open <%s> for write\n", fn_req);
         return KAT_FILE_OPEN_ERROR;
     }
-    sprintf(fn_rsp, "PQCsignKAT_%d.rsp", CRYPTO_SECRETKEYBYTES);
+    sprintf(fn_rsp, "PQCsignKAT.rsp");
     if ( (fp_rsp = fopen(fn_rsp, "w")) == NULL ) {
         printf("Couldn't open <%s> for write\n", fn_rsp);
         return KAT_FILE_OPEN_ERROR;
@@ -57,6 +69,7 @@ main()
 
     randombytes_init(entropy_input, NULL, 256);
     for (int i=0; i<100; i++) {
+        fprintf(fp_req, "variant = \n");
         fprintf(fp_req, "count = %d\n", i);
         randombytes(seed, 48);
         fprintBstr(fp_req, "seed = ", seed, 48);
@@ -67,7 +80,10 @@ main()
         fprintf(fp_req, "pk =\n");
         fprintf(fp_req, "sk =\n");
         fprintf(fp_req, "smlen =\n");
-        fprintf(fp_req, "sm =\n\n");
+        fprintf(fp_req, "sm =\n");
+        fprintf(fp_req, "cpu_time_used_kp =\n");
+        fprintf(fp_req, "cpu_time_used_sign =\n");
+        fprintf(fp_req, "cpu_time_used_vrf =\n\n");
     }
     fclose(fp_req);
     
@@ -77,7 +93,7 @@ main()
         return KAT_FILE_OPEN_ERROR;
     }
     
-    fprintf(fp_rsp, "# %s\n\n", CRYPTO_ALGNAME);
+    //fprintf(fp_rsp, "# %s\n\n", CRYPTO_ALGNAME);
     done = 0;
     do {
         if ( FindMarker(fp_req, "count = ") )
@@ -86,6 +102,7 @@ main()
             done = 1;
             break;
         }
+        fprintf(fp_rsp, "variant = %s\n", variant);
         fprintf(fp_rsp, "count = %d\n", count);
         
         if ( !ReadHex(fp_req, seed, 48, "seed = ") ) {
@@ -115,26 +132,38 @@ main()
         fprintBstr(fp_rsp, "msg = ", m, mlen);
         
         // Generate the public/private keypair
+        start_kp = clock();
         if ( (ret_val = crypto_sign_keypair(pk, sk)) != 0) {
             printf("crypto_sign_keypair returned <%d>\n", ret_val);
             return KAT_CRYPTO_FAILURE;
         }
+        end_kp = clock();
+        cpu_time_used_kp = ((double) (end_kp - start_kp)) / CLOCKS_PER_SEC;
         fprintBstr(fp_rsp, "pk = ", pk, CRYPTO_PUBLICKEYBYTES);
         fprintBstr(fp_rsp, "sk = ", sk, CRYPTO_SECRETKEYBYTES);
         
+        start_sign = clock();
         if ( (ret_val = crypto_sign(sm, &smlen, m, mlen, sk)) != 0) {
             printf("crypto_sign returned <%d>\n", ret_val);
             return KAT_CRYPTO_FAILURE;
         }
+        end_sign = clock();
+        cpu_time_used_sign = ((double) (end_sign - start_sign)) / CLOCKS_PER_SEC;
         fprintf(fp_rsp, "smlen = %llu\n", smlen);
         fprintBstr(fp_rsp, "sm = ", sm, smlen);
-        fprintf(fp_rsp, "\n");
         
+        start_vrf = clock();
         if ( (ret_val = crypto_sign_open(m1, &mlen1, sm, smlen, pk)) != 0) {
             printf("crypto_sign_open returned <%d>\n", ret_val);
             return KAT_CRYPTO_FAILURE;
         }
-        
+        end_vrf = clock();
+        cpu_time_used_vrf = ((double) (end_vrf - start_vrf)) / CLOCKS_PER_SEC;
+        fprintf(fp_rsp, "cpu_time_used_kp = %f\n", cpu_time_used_kp);
+        fprintf(fp_rsp, "cpu_time_used_sign = %f\n", cpu_time_used_sign);
+        fprintf(fp_rsp, "cpu_time_used_vrf = %f\n", cpu_time_used_vrf);
+        fprintf(fp_rsp, "\n");
+
         if ( mlen != mlen1 ) {
             printf("crypto_sign_open returned bad 'mlen': Got <%llu>, expected <%llu>\n", mlen1, mlen);
             return KAT_CRYPTO_FAILURE;
