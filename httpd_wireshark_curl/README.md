@@ -59,24 +59,25 @@ Execute o comando para subir a infraestrutura dos *containers*. Em seguida, a ja
   docker-compose up
   ```
 ___
-> **_OBS:_** Caso não encontre a interface de rede usada pelos *containers*, use o seguinte comando para descobrir o NETWORK ID. No Wireshark ela aparece como br-\<NETWORK ID\> (br-74089cc36d84).
->  ```
->  docker network ls
->  ```
+>**_OBS:_** Caso não encontre a interface de rede usada pelos *containers*, use o seguinte comando para descobrir o NETWORK ID. No Wireshark ela aparece como br-\<NETWORK ID\> (br-74089cc36d84).
+>```
+>docker network ls
+>```
 
 
- > **_OBS:_** Se for preciso salvar o monitoramento, utilize o `/home` (oqs-wireshark). Um diretório chamado `save_monitoring` será criado no diretório atual do seu *host*.
-> Para visualizar o arquivo de monitoramento recomendamos usar o pacote **tshark**.
+>**_OBS:_** Se for preciso salvar o monitoramento, utilize o `/home` (oqs-wireshark). Um diretório chamado `save_monitoring` será criado no diretório atual do seu *host*.
 >
->  > Instalação:
->    > ```
->    > sudo apt install tshark
->    > ```
->  > Visualizar o arquivo:
->    > ```
->    > tshark -r <nome_do_arquivo>.pcap
->    > ```
->  > Use `-V` para mais detalhes:
->    > ```
->    > tshark -r <nome_do_arquivo>.pcap -V
->    > ```
+>Para visualizar o arquivo de monitoramento recomendamos usar o pacote **tshark**.
+>
+>Instalação:
+>```
+>sudo apt install tshark
+>```
+>Visualizar o arquivo:
+>```
+>tshark -r <nome_do_arquivo>.pcap
+>```
+>Use `-V` para mais detalhes:
+>```
+>tshark -r <nome_do_arquivo>.pcap -V
+>```
