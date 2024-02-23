@@ -50,13 +50,13 @@ Alterne entre os **commands** do oqs-curl para:
 
     `curl --cacert /cacert_curl/CA.crt https://oqs-httpd:4433 --curves kyber768`
 
-#### Como executar
+### Como executar
 Execute o comando para subir a infraestrutura dos *containers*. Em seguida, a janela do Wireshark abrirá em seu *host*, selecione uma interface de rede para monitorar.
 
   ```
   docker-compose up
   ```
-
+---
 > **_OBS:_** Caso não encontre a interface de rede usada pelos *containers*, use o seguinte comando para descobrir o NETWORK ID. No Wireshark ela aparece como br-\<NETWORK ID\> (br-74089cc36d84).
 >  ```
 >  docker network ls
