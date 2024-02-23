@@ -69,14 +69,14 @@ ___
 > Para visualizar o arquivo de monitoramento recomendamos usar o pacote **tshark**.
 >
   > Instalação:
-    >```
-    >sudo apt install tshark
-    >```
+    > ```
+    > sudo apt install tshark
+    > ```
   > Visualizar o arquivo:
-    >```
-    >tshark -r <nome_do_arquivo>.pcap
-    >```
+    > ```
+    > tshark -r <nome_do_arquivo>.pcap
+    > ```
   > Use `-V` para mais detalhes:
-    >```
-    >tshark -r <nome_do_arquivo>.pcap -V
-    >```
+    > ```
+    > tshark -r <nome_do_arquivo>.pcap -V
+    > ```
