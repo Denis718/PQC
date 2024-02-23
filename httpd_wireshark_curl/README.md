@@ -1,12 +1,14 @@
 # OQS Apache HTTPd - OQS Wireshark - OQS Curl
 
+
+##  Descrição
+
 Este diretório contém um arquivo Docker Compose, que cria uma infraestrutura com três *containers*:
   
  - [OQS Apache HTTPd](https://hub.docker.com/r/openquantumsafe/httpd) 
  - [OQS Wireshark](https://hub.docker.com/r/openquantumsafe/wireshark)
  - [OQS Curl](https://hub.docker.com/r/openquantumsafe/curl)
 
-##  Descrição
 O servidor HTTP Apache (oqs-httpd) e o Curl (oqs-curl) estão usando o OpenSSL(v3) com o [oqs-provider](https://github.com/open-quantum-safe/oqs-provider), o que possibilita a negociação de chaves quânticas seguras e sua utilização na autenticação confiável dentro do TLS 1.3. 
 
 O container Wireshark (oqs-wireshark) permite visualizar a troca de mensagens entre o oqs-httpd e o oqs-curl. 
@@ -19,6 +21,7 @@ Pode ser necessário conceder permissões ao Docker para acessar o display X.
   xhost +local:$USER
   ```
 
+### Variáveis de ambiente
 Altere as variáveis de ambiente `DEFAULT_GROUPS` e `SIG_ALG` para selecionar os algoritmos de KEM (Key encapsulation mechanism) e de assinatura digital, respectivamente.
   
   Algoritmos padrões:
@@ -34,6 +37,7 @@ Altere as variáveis de ambiente `DEFAULT_GROUPS` e `SIG_ALG` para selecionar os
     
     `SIG_ALG: dilithium3`
 
+### Modos de uso
 Para alterar o algoritmo usado pelo oqs-curl, modifique o parâmetro `--curves`.
 
 Alterne entre os **commands** do oqs-curl para:
@@ -46,6 +50,7 @@ Alterne entre os **commands** do oqs-curl para:
 
     `curl --cacert /cacert_curl/CA.crt https://oqs-httpd:4433 --curves kyber768`
 
+#### Como executar
 Execute o comando para subir a infraestrutura dos *containers*. Em seguida, a janela do Wireshark abrirá em seu *host*, selecione uma interface de rede para monitorar.
 
   ```
