@@ -11,12 +11,14 @@ Este diretório contém um arquivo Docker Compose, que cria uma infraestrutura c
 
 O servidor HTTP Apache (oqs-httpd) e o Curl (oqs-curl) estão usando o OpenSSL(v3) com o [oqs-provider](https://github.com/open-quantum-safe/oqs-provider), o que possibilita a negociação de chaves quânticas seguras e sua utilização na autenticação confiável dentro do TLS 1.3. 
 
-O container Wireshark (oqs-wireshark) permite visualizar a troca de mensagens entre o oqs-httpd e o oqs-curl. 
+O *container* Wireshark (oqs-wireshark) permite visualizar a troca de mensagens entre o oqs-httpd e o oqs-curl. 
 
 <img src="./screenshot_wireshark.png" alt="Wireshark" style="width:100vh;"/>
 
 ## Como usar
-Pode ser necessário conceder permissões ao Docker para acessar o display X.
+
+### Permissão
+Pode ser necessário conceder permissões ao Docker para acessar o *display* X.
   ```
   xhost +local:$USER
   ```
@@ -56,11 +58,25 @@ Execute o comando para subir a infraestrutura dos *containers*. Em seguida, a ja
   ```
   docker-compose up
   ```
----
+___
 > **_OBS:_** Caso não encontre a interface de rede usada pelos *containers*, use o seguinte comando para descobrir o NETWORK ID. No Wireshark ela aparece como br-\<NETWORK ID\> (br-74089cc36d84).
 >  ```
 >  docker network ls
 >  ```
 
 
- > **_OBS:_** Se for preciso salvar o monitoramento, utilize o `/home` (do oqs-wireshark). Um diretório chamado `save_monitoring` será criado no diretório atual do seu *host*.
+ > **_OBS:_** Se for preciso salvar o monitoramento, utilize o `/home` (oqs-wireshark). Um diretório chamado `save_monitoring` será criado no diretório atual do seu *host*.
+> Para visualizar o arquivo de monitoramento recomendamos usar o pacote **tshark**.
+>
+  > Instalação:
+    >```
+    >sudo apt install tshark
+    >```
+  > Visualizar o arquivo:
+    >```
+    >tshark -r <nome_do_arquivo>.pcap
+    >```
+  > Use `-V` para mais detalhes:
+    >```
+    >tshark -r <nome_do_arquivo>.pcap -V
+    >```
