@@ -67,7 +67,7 @@ ___
 
 >**_OBS:_** Se for preciso salvar o monitoramento, utilize o `/home` (oqs-wireshark). Um diretório chamado `save_monitoring` será criado no diretório atual do seu *host*.
 >
->Para visualizar o arquivo de monitoramento recomendamos usar o pacote **tshark**.
+>Para visualizar o arquivo de monitoramento, recomendamos usar o pacote **tshark**.
 >
 >Instalação:
 >```
