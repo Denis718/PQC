@@ -22,7 +22,7 @@ services:
     ports:
       - "3000:3000"
     networks:
-      net-json-server-oqs-httpd-reverse-proxy-oqs-curl:
+      net0:
         ipv4_address: 172.18.2.3
 
   oqs-httpd-reverse-proxy:
@@ -31,7 +31,7 @@ services:
     volumes:
       - shared-volume:/opt/httpd/cacert
     networks:
-      net-json-server-oqs-httpd-reverse-proxy-oqs-curl:
+      net0:
         ipv4_address: 172.18.2.4
     depends_on:
       - oqs-wireshark
@@ -49,7 +49,7 @@ services:
     volumes:
       - shared-volume:/cacert_curl
     networks:
-      net-json-server-oqs-httpd-reverse-proxy-oqs-curl:
+      net0:
         ipv4_address: 172.18.2.5
     depends_on:
       - oqs-wireshark
@@ -67,10 +67,10 @@ services:
     # unsafe (without certificate)
     command: watch -n 10 curl --insecure https://oqs-httpd-reverse-proxy:4433/api --curves kyber768
     # safe (with certificate)
-    # command: watch -n 10 curl --cacert /cacert_curl/CA.crt https://oqs-httpd-reverse-proxy:4433/api --curves kyber768
+    #command: watch -n 10 curl --cacert /cacert_curl/CA.crt https://oqs-httpd-reverse-proxy:4433/api --curves kyber768
 
 networks:
-  net-json-server-oqs-httpd-reverse-proxy-oqs-curl:
+  net0:
     ipam:
       config:
         - subnet: 172.18.2.0/24

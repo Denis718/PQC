@@ -23,7 +23,7 @@ services:
     volumes:
       - shared-volume:/opt/httpd/cacert
     networks:
-      net-oqs-httpd-oqs-curl:
+      net0:
         ipv4_address: 172.18.1.4
     depends_on:
       - oqs-wireshark
@@ -40,7 +40,7 @@ services:
     volumes:
       - shared-volume:/cacert_curl
     networks:
-      net-oqs-httpd-oqs-curl:
+      net0:
         ipv4_address: 172.18.1.5
     depends_on:
       - oqs-wireshark
@@ -59,7 +59,7 @@ services:
     command: watch -n 10 curl --cacert /cacert_curl/CA.crt https://oqs-httpd:4433 --curves kyber768
 
 networks:
-  net-oqs-httpd-oqs-curl:
+  net0:
     ipam:
       config:
         - subnet: 172.18.1.0/24
