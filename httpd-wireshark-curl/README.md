@@ -13,7 +13,7 @@ O servidor HTTP Apache (oqs-httpd) e o Curl (oqs-curl) estão usando o OpenSSL(v
 
 O *container* Wireshark (oqs-wireshark) permite visualizar a troca de mensagens entre o oqs-httpd e o oqs-curl. 
 
-<img src="./screenshot_wireshark.png" alt="Wireshark" style="width:100vh;"/>
+<img src="./screenshot-example-wireshark.png" alt="Wireshark" style="width:100vh;"/>
 
 ## Como usar
 
@@ -46,7 +46,7 @@ Alterne entre os **commands** do oqs-curl para:
 
   * Modo inseguro (sem certificado)
     
-    `curl --insecure https://oqs_httpd:4433 --curves kyber768`
+    `curl --insecure https://oqs-httpd:4433 --curves kyber768`
 
   * Modo seguro (com certificado)
 
@@ -65,7 +65,7 @@ ___
 >```
 
 
->**_OBS:_** Se for preciso salvar o monitoramento, utilize o `/home` (oqs-wireshark). Um diretório chamado `save_monitoring` será criado no diretório atual do seu *host*.
+>**_OBS:_** Se for preciso salvar o monitoramento, utilize o `/home` (oqs-wireshark). Um diretório chamado `save-monitoring` será criado no diretório atual do seu *host*.
 >
 >Para visualizar o arquivo de monitoramento, recomendamos usar o pacote **tshark**.
 >
