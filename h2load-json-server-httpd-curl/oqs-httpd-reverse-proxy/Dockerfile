@@ -16,7 +16,7 @@ ARG OPENSSL_PATH=/opt/openssl
 ARG HTTPD_PATH=/opt/httpd
 
 # defines the QSC signature algorithm used for the certificates:
-# ARG SIG_ALG="dilithium3"
+ARG SIG_ALG="dilithium3"
 
 # defines default KEM groups to be announced
 ARG DEFAULT_GROUPS="kyber768:p384_kyber768"
@@ -112,10 +112,9 @@ WORKDIR ${HTTPD_PATH}
 RUN set -x && \
     mkdir pki && \
     mkdir cacert && \
-                        # openssl req -newkey rsa:2048 -x509 -sha256 -days 365 -nodes -keyout server.key -out server.crt
-    ${OPENSSL_PATH}/bin/openssl req -x509 -sha256 -new -newkey rsa:2048 -keyout cacert/CA.key -out cacert/CA.crt -nodes -subj "/CN=test CA" -days 365 -config ${OPENSSL_CNF} && \
-    ${OPENSSL_PATH}/bin/openssl req -new -newkey rsa:2048 -keyout pki/server.key -out pki/server.csr -nodes -subj "/CN=httpd" -config ${OPENSSL_CNF} && \
-    ${OPENSSL_PATH}/bin/openssl x509 -sha256 -req -in pki/server.csr -out pki/server.crt -CA cacert/CA.crt -CAkey cacert/CA.key -CAcreateserial -days 365
+    ${OPENSSL_PATH}/bin/openssl req -x509 -new -newkey ${SIG_ALG} -keyout cacert/CA.key -out cacert/CA.crt -nodes -subj "/CN=oqstest CA" -days 365 -config ${OPENSSL_CNF} && \
+    ${OPENSSL_PATH}/bin/openssl req -new -newkey ${SIG_ALG} -keyout pki/server.key -out pki/server.csr -nodes -subj "/CN=oqs-httpd" -config ${OPENSSL_CNF} && \
+    ${OPENSSL_PATH}/bin/openssl x509 -req -in pki/server.csr -out pki/server.crt -CA cacert/CA.crt -CAkey cacert/CA.key -CAcreateserial -days 365
 
 # Some size optimization:
 RUN rm -rf ${HTTPD_PATH}/bin/ab
