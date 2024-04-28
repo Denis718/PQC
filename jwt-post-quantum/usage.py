@@ -1,4 +1,4 @@
-import jwt.jwt as jwt
+from jwt import jwt
 
 def main():
     

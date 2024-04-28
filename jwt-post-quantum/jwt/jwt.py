@@ -3,7 +3,7 @@ import json
 from pprint import pprint
 
 # internal import
-import jwt.utils as utils
+from . import utils
 
 def _generate_header(algorithm: str):
     try:       
