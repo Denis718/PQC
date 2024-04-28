@@ -15,5 +15,5 @@ def main():
 
     print("Valid signature?", is_valid)
 
-if __name__:
+if __name__ == '__main__':
     main()
