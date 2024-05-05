@@ -2,3 +2,4 @@ test.py
 jwt/*.key
 jwt/__pycache__
 venv/
+*.csv
