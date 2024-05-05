@@ -29,11 +29,13 @@ def save_key(filename: str, filebytes: bytes):
     file.write(filebytes)
 
 def read_key(filename: str):
+  
   if os.path.exists(f'{_current_dir()}/{filename}'):
     with open(f'{_current_dir()}/{filename}', 'rb') as file: 
       r = file.read()
     return r
-  return None #TODO exection - file not found
-
+  else:
+    raise FileNotFoundError(f'Key file \"{filename}\" not found')
+  
 def _current_dir():
   return os.path.dirname(os.path.realpath(__file__))
