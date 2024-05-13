@@ -116,6 +116,7 @@ def main():
     fig_times.supylabel('mechanisms')
 
     plt.tight_layout()
+    plt.savefig("times-jwt.svg")
     plt.show()
 
 
@@ -144,6 +145,7 @@ def main():
     fig_size.supylabel('mechanisms')
     
     plt.tight_layout()
+    plt.savefig("sizes-jwt.svg")
     plt.show()
 
 if __name__ == '__main__':
