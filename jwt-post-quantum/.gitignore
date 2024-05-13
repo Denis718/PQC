@@ -3,3 +3,4 @@ jwt/*.key
 jwt/__pycache__
 venv/
 *.csv
+*.svg
