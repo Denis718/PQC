@@ -14,19 +14,48 @@ services:
     volumes:
       - ./save-monitoring:/home
 
-  json-server:
-    container_name: json-server
-    build: ./json-server
+  postgres:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    volumes:
+      - db-volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_USER: user
+      POSTGRES_DB: db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
     depends_on:
       - oqs-wireshark
+    networks:
+      net0:
+        ipv4_address: 172.18.2.2
+
+  json-server:
+    container_name: json-server
+    build: 
+      context: ./..
+      dockerfile: ./json-server-httpd-reverse-proxy-curl/json-server/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+      oqs-wireshark:
+        condition: service_started
+    volumes:
+      - db-volume:/mydatabase
     ports:
-      - "3000:3000"
+      - "5000:5000"
     networks:
       net0:
         ipv4_address: 172.18.2.3
 
-  oqs-httpd:
-    container_name: oqs-httpd
+  oqs-httpd-reverse-proxy:
+    container_name: oqs-httpd-reverse-proxy
     build: ./httpd-reverse-proxy
     volumes:
       - shared-volume:/opt/httpd/cacert
@@ -36,6 +65,7 @@ services:
     depends_on:
       - oqs-wireshark
       - json-server
+      - postgres
     environment:
       # default "kyber768:p384_kyber768"
       DEFAULT_GROUPS: kyber768:p384_kyber768
@@ -54,7 +84,8 @@ services:
     depends_on:
       - oqs-wireshark
       - json-server
-      - oqs-httpd
+      - postgres
+      - oqs-httpd-reverse-proxy
     tty: true
     environment:
       # default "x25519:x448:kyber512:p256_kyber512:kyber768:p384_kyber768:kyber1024:p521_kyber1024"
@@ -63,11 +94,10 @@ services:
       SIG_ALG: dilithium3
 
     # repeats the curl command every 10 seconds
-
     # unsafe (without certificate)
-    #command: watch -n 10 curl --insecure https://oqs-httpd:4433/produtos --curves kyber768
+    # command: watch -n 10 curl -v --insecure https://oqs-httpd-reverse-proxy:4433/produtos --curves kyber768
     # safe (with certificate)
-    command: watch -n 10 curl --cacert /cacert_curl/CA.crt https://oqs-httpd:4433/produtos --curves kyber768
+    # command: watch -n 10 curl -v --cacert /cacert_curl/CA.crt https://oqs-httpd-reverse-proxy:4433/produtos --curves kyber768
 
 networks:
   net0:
@@ -77,3 +107,4 @@ networks:
 
 volumes:
   shared-volume:
+  db-volume:
