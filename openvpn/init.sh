@@ -27,11 +27,6 @@ docker volume create --name $OQS_DATA && docker network create --driver=bridge -
 docker run -e OQSSIGALG=$OQS_SIGALG -v $OQS_DATA:/config/openvpn -d $OQS_OPENVPN_DOCKERIMAGE sh -c "cd /config/openvpn && ca_cacert.sh"
 
 
-# docker run -v openvpn-data:/etc/openvpn --rm kylemanna/openvpn ovpn_genconfig -u udp://VPN.SERVERNAME.COM
-
-# docker network create --driver=bridge --subnet=192.168.0.0/16 br0
-
-
 docker run --name $OQS_SERVER -e SERVERFQDN=$OQS_SERVER --net $OQS_NETWORK -v $OQS_DATA:/etc/openvpn -d --cap-add=NET_ADMIN $OQS_OPENVPN_DOCKERIMAGE_SERVER serverstart.sh
 docker run --name $OQS_CLIENT -e SERVERFQDN=$OQS_SERVER -e CLIENTFQDN=$OQS_CLIENT --net $OQS_NETWORK -v $OQS_DATA:/etc/openvpn -d --cap-add=NET_ADMIN $OQS_OPENVPN_DOCKERIMAGE_CLIENT clientstart.sh
 
