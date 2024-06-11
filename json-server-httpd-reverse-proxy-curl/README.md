@@ -41,5 +41,5 @@ TOKEN=$(curl --cacert /cacert_curl/CA.crt --curves kyber768 https://oqs-httpd-re
 
 Lista produtos (apenas para usuários autenticados).
 ```
-curl --cacert /cacert_curl/CA.crt --curves kyber768 https://oqs-httpd-reverse-proxy:4433/products -X GET -H "Content-type: application/json" -H "Authorization: Bearer $(echo $TOKEN)"
+curl --cacert /cacert_curl/CA.crt --curves kyber768 https://oqs-httpd-reverse-proxy:4433/products -X GET -H "Authorization: Bearer $(echo $TOKEN)"
 ```
