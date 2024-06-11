@@ -21,14 +21,14 @@ export OQS_OPENVPN_DOCKERIMAGE_SERVER="oqs-openvpn-server"
 export OQS_OPENVPN_DOCKERIMAGE_CLIENT="oqs-openvpn-client"
 
 
-docker volume create --name $OQS_DATA && docker network create --driver=bridge --subnet=192.168.0.0/24 $OQS_NETWORK
+docker volume create --name $OQS_DATA && docker network create --driver=bridge --subnet=172.18.1.0/24 $OQS_NETWORK
 
 
 docker run -e OQSSIGALG=$OQS_SIGALG -v $OQS_DATA:/config/openvpn -d $OQS_OPENVPN_DOCKERIMAGE sh -c "cd /config/openvpn && ca_cacert.sh"
 
 
-docker run --name $OQS_SERVER -e SERVERFQDN=$OQS_SERVER --net $OQS_NETWORK -v $OQS_DATA:/etc/openvpn -d --cap-add=NET_ADMIN $OQS_OPENVPN_DOCKERIMAGE_SERVER serverstart.sh
-docker run --name $OQS_CLIENT -e SERVERFQDN=$OQS_SERVER -e CLIENTFQDN=$OQS_CLIENT --net $OQS_NETWORK -v $OQS_DATA:/etc/openvpn -d --cap-add=NET_ADMIN $OQS_OPENVPN_DOCKERIMAGE_CLIENT clientstart.sh
+docker run --name $OQS_SERVER -e SERVERFQDN=$OQS_SERVER --net $OQS_NETWORK --ip 172.18.1.2 -v $OQS_DATA:/etc/openvpn -d --cap-add=NET_ADMIN $OQS_OPENVPN_DOCKERIMAGE_SERVER serverstart.sh
+docker run --name $OQS_CLIENT -e SERVERFQDN=$OQS_SERVER -e CLIENTFQDN=$OQS_CLIENT --net $OQS_NETWORK --ip 172.18.1.3 -v $OQS_DATA:/etc/openvpn -d --cap-add=NET_ADMIN $OQS_OPENVPN_DOCKERIMAGE_CLIENT clientstart.sh
 
 
 # Allow time to start up
