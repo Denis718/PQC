@@ -54,10 +54,10 @@ services:
 
     # repeats the curl command every 10 seconds
     # unsafe (without certificate)
-    #command: watch -n 10 curl --insecure https://oqs-httpd:4433 --curves p384_kyber768
+    #command: watch -n 10 curl -v --insecure https://oqs-httpd:4433 --curves p384_kyber768
     # safe (with certificate)
-    command: watch -n 10 curl --cacert /cacert_curl/CA.crt https://oqs-httpd:4433 --curves kyber768
-
+    command: watch -n 10 curl -v --cacert /cacert_curl/CA.crt https://oqs-httpd:4433 --curves kyber768
+    
 networks:
   net0:
     ipam:
