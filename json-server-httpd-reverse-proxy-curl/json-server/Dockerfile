@@ -1,3 +1,9 @@
+# define the liboqs tag to be used
+ARG LIBOQS_TAG=0.10.0
+
+# define the liboqs-python tag to be used
+ARG LIBOQS_PYTHON_TAG=0.10.0
+
 FROM python:bookworm
 
 # Install dependencies
@@ -11,19 +17,15 @@ RUN useradd -m -c "Open Quantum Safe" oqs
 WORKDIR /home/oqs
 
 # Get liboqs current version
-# RUN git clone --depth 1 --branch main https://github.com/open-quantum-safe/liboqs
-
-# Get liboqs version 0.10.0 (Mar 23) - https://github.com/open-quantum-safe/liboqs/releases/tag/0.10.0
-RUN wget https://github.com/open-quantum-safe/liboqs/archive/refs/tags/0.10.0.zip
-RUN unzip 0.10.0.zip
+RUN git clone --depth 1 --branch ${LIBOQS_TAG} https://github.com/open-quantum-safe/liboqs
 
 # Install liboqs
-RUN cmake -S liboqs-0.10.0 -B liboqs-0.10.0/build -DBUILD_SHARED_LIBS=ON
-RUN cmake --build liboqs-0.10.0/build --parallel 4
-RUN cmake --build liboqs-0.10.0/build --target install
+RUN cmake -S liboqs -B liboqs/build -DBUILD_SHARED_LIBS=ON
+RUN cmake --build liboqs/build --parallel 4
+RUN cmake --build liboqs/build --target install
 
 # Get liboqs-python
-RUN git clone --depth 1 --branch main https://github.com/open-quantum-safe/liboqs-python.git
+RUN git clone --depth 1 --branch ${LIBOQS_PYTHON_TAG} https://github.com/open-quantum-safe/liboqs-python.git
 
 COPY ./json-server-httpd-reverse-proxy-curl/json-server/db.json .
 COPY ./jwt-post-quantum ./jwtpostquantum
