@@ -133,6 +133,7 @@ ARG OPENVPNDIR
 COPY clientstart.sh ${INSTALLDIR}/bin
 COPY openvpn-openssl.cnf ${OPENVPNDIR}
 COPY client.config ${OPENVPNDIR}
+COPY ca/ /etc/openvpn
 
 WORKDIR ${OPENVPNDIR}
 
