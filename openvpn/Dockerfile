@@ -44,7 +44,7 @@ RUN apt install -y  \
             openssl libssl-dev pkg-config libcap-ng-dev \
             git docker wget vim net-tools \
             liblzo2-dev libpam0g-dev python3-docutils \
-            libnl-3-dev libnl-genl-3-dev
+            libnl-3-dev libnl-genl-3-dev 
 
 # get all sources
 WORKDIR /opt
@@ -99,8 +99,8 @@ FROM base AS ca
 ARG INSTALLDIR
 ARG OPENVPNDIR
 
-COPY ca_cacert.sh ${INSTALLDIR}/bin
-COPY openvpn-openssl.cnf ${OPENVPNDIR}
+COPY ./container/ca_cacert.sh ${INSTALLDIR}/bin
+COPY ./container/openvpn-openssl.cnf ${OPENVPNDIR}
 
 WORKDIR ${OPENVPNDIR}
 
@@ -112,9 +112,11 @@ FROM base AS server
 ARG INSTALLDIR
 ARG OPENVPNDIR
 
-COPY serverstart.sh ${INSTALLDIR}/bin
-COPY openvpn-openssl.cnf ${OPENVPNDIR}
-COPY server.config ${OPENVPNDIR}
+RUN apt install -y nginx
+
+COPY ./container/serverstart.sh ${INSTALLDIR}/bin
+COPY ./container/openvpn-openssl.cnf ${OPENVPNDIR}
+COPY ./container/server.config ${OPENVPNDIR}
 
 WORKDIR ${OPENVPNDIR}
 
@@ -122,7 +124,7 @@ WORKDIR ${OPENVPNDIR}
 #RUN addgroup -g 1000 -S oqs && adduser --uid 1000 -S oqs -G oqs 
 #USER oqs
 
-CMD ["serverstart.sh"]
+CMD ["container/serverstart.sh"]
 STOPSIGNAL SIGTERM
 
 FROM base AS client
@@ -130,10 +132,11 @@ FROM base AS client
 ARG INSTALLDIR
 ARG OPENVPNDIR
 
-COPY clientstart.sh ${INSTALLDIR}/bin
-COPY openvpn-openssl.cnf ${OPENVPNDIR}
-COPY client.config ${OPENVPNDIR}
-COPY ca/ /etc/openvpn
+RUN apt install -y curl
+
+COPY ./container/clientstart.sh ${INSTALLDIR}/bin
+COPY ./container/openvpn-openssl.cnf ${OPENVPNDIR}
+COPY ./container/client.config ${OPENVPNDIR}
 
 WORKDIR ${OPENVPNDIR}
 
@@ -141,5 +144,5 @@ WORKDIR ${OPENVPNDIR}
 #RUN addgroup -g 1000 -S oqs && adduser --uid 1000 -S oqs -G oqs 
 #USER oqs
 
-CMD ["clientstart.sh"]
+CMD ["container/clientstart.sh"]
 STOPSIGNAL SIGTERM
