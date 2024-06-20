@@ -1,0 +1,23 @@
+# name of OQS signature algorithm to use for TLS auth key/certs
+OQS_SIGALG="p521_falcon1024"
+
+# name of volume to contain all certs and configs
+OQS_DATA="ovpn-data-oqstest"
+
+# name of docker network to use for testing
+OQS_NETWORK="oqsopenvpntestnet"
+
+# DNS name of test ca
+OQS_CA="oqsopenvpnca"
+
+# DNS name of test server
+OQS_SERVER="oqsopenvpnserver"
+
+# DNS name of test client
+OQS_CLIENT="oqsopenvpnclient"
+
+# name of docker image to run
+OQS_OPENVPN_DOCKERIMAGE_CA="oqs-openvpn-ca"
+OQS_OPENVPN_DOCKERIMAGE_SERVER="oqs-openvpn-server"
+OQS_OPENVPN_DOCKERIMAGE_CLIENT="oqs-openvpn-client"
+
