@@ -37,12 +37,10 @@ if [ ! -f ca_cert.crt ]; then
     exit 1
 fi
 
+service nginx start
 
 if [ -z "$TLS_GROUPS" ]; then
     openvpn --config server.config 
 else
     openvpn --config server.config --tls-groups $TLS_GROUPS
 fi
-
-
-
