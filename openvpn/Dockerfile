@@ -105,7 +105,7 @@ COPY ./container/openvpn-openssl.cnf ${OPENVPNDIR}
 WORKDIR ${OPENVPNDIR}
 
 # CMD ["ca_cacert.sh"]
-# STOPSIGNAL SIGTERM
+STOPSIGNAL SIGTERM
 
 FROM base AS server
 
@@ -124,7 +124,7 @@ WORKDIR ${OPENVPNDIR}
 #RUN addgroup -g 1000 -S oqs && adduser --uid 1000 -S oqs -G oqs 
 #USER oqs
 
-CMD ["container/serverstart.sh"]
+# CMD ["serverstart.sh"]
 STOPSIGNAL SIGTERM
 
 FROM base AS client
@@ -144,5 +144,5 @@ WORKDIR ${OPENVPNDIR}
 #RUN addgroup -g 1000 -S oqs && adduser --uid 1000 -S oqs -G oqs 
 #USER oqs
 
-CMD ["container/clientstart.sh"]
+# CMD ["clientstart.sh"]
 STOPSIGNAL SIGTERM

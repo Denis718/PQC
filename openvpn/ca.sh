@@ -21,4 +21,9 @@ if [ "$1" == "run" ]; then
         -v ./ca:/config/openvpn \
         $OQS_OPENVPN_DOCKERIMAGE_CA \
         sh -c "cd /config/openvpn && ca_cacert.sh"
+
+
+	echo "copy the 'ca' directory to the client"
+
 fi
+
