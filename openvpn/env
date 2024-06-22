@@ -13,6 +13,9 @@ OQS_CA="oqsopenvpnca"
 # DNS name of test server
 OQS_SERVER="oqsopenvpnserver"
 
+# Server IP - for when the client is not the same docker network as the server 
+IP_OQS_SERVER="192.168.0.23"
+
 # DNS name of test client
 OQS_CLIENT="oqsopenvpnclient"
 
