@@ -1,0 +1,90 @@
+version: "3.0"
+
+services:
+
+  oqs-wireshark:
+    container_name: oqs-wireshark
+    image: openquantumsafe/wireshark:latest
+    # image: openquantumsafe/wireshark:0.7.1
+    network_mode: host
+    privileged: true
+    environment:
+      - DISPLAY=$DISPLAY
+      - XDG_RUNTIME_DIR=/tmp
+    volumes:
+      - ./save-monitoring:/home
+
+  # Container to generate the CA
+  oqs-openvpn-ca:
+    container_name: oqsopenvpnca
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: ca
+    env_file: 
+      - ./env
+    depends_on:
+      oqs-wireshark: 
+        condition: service_started
+    volumes:
+      - ca-shared-volume:/config/openvpn
+    network_mode: none
+    command: sh -c "cd /config/openvpn && ca_cacert.sh"
+
+  oqs-openvpn-server:
+    container_name: oqsopenvpnserver
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: server
+    env_file: 
+      - ./env
+    depends_on:
+      oqs-wireshark: 
+        condition: service_started
+      oqs-openvpn-ca: 
+        condition: service_started
+    volumes:
+      - ca-shared-volume:/etc/openvpn
+    ports:
+      - "1194:1194"
+      - "80:80"
+    networks: 
+      oqsopenvpntestnet:
+        ipv4_address: 172.18.2.2
+    cap_add:
+      - NET_ADMIN
+    command: sh -c "sleep 10 && serverstart.sh"
+
+  oqs-openvpn-client:
+    container_name: oqsopenvpnclient
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: client
+    env_file: 
+      - ./env
+    depends_on:
+      oqs-wireshark: 
+        condition: service_started
+      oqs-openvpn-ca: 
+        condition: service_started
+      oqs-openvpn-server: 
+        condition: service_started
+    volumes:
+      - ca-shared-volume:/etc/openvpn
+    networks: 
+      oqsopenvpntestnet:
+        ipv4_address: 172.18.2.3
+    cap_add:
+      - NET_ADMIN
+    command: sh -c "sleep 15 && clientstart.sh"
+ 
+networks:
+  oqsopenvpntestnet:
+    ipam:
+      config:
+        - subnet: 172.18.2.0/24
+
+volumes:
+  ca-shared-volume:
