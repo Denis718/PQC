@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $# -ne 1 ]; then
+if [ $# -ne 1 ] || ( [ "$1" != "build" ] && [ "$1" != "run" ] ); then
     echo "Usage: $0 {build|run}"
     exit 1
 fi

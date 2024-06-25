@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $# -ne 1 ]; then
+if [ $# -ne 1 ] || ( [ "$1" != "build" ] && [ "$1" != "run" ] ); then
     echo "Usage: $0 {build|run}"
     exit 1
 fi
@@ -18,7 +18,7 @@ if [ "$1" == "run" ]; then
         --rm -d \
         --name $OQS_CLIENT \
         -e CLIENTFQDN=$OQS_CLIENT \
-	-e SERVERFQDN=$IP_OQS_SERVER \
+	    -e SERVERFQDN=$IP_OQS_SERVER \
         --net bridge \
         --mount src="$(pwd)/ca",target=/etc/openvpn,type=bind \
         --cap-add=NET_ADMIN \
