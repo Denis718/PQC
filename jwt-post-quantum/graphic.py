@@ -22,6 +22,83 @@ algorithm = ('Dilithium', 'ML-DSA', 'Falcon', 'SPHINCS+-SHA2', 'SPHINCS+-SHAKE')
 #             if sig == mechanism:
 #                 return int(sig[-1])
 
+
+def by_level(graphics, id_level, width):    
+
+    fig = plt.figure(figsize=(16,9))
+
+    ax = fig.subplots(2) 
+
+    for graphic in graphics:
+        level = graphic['level']
+        if level == id_level:
+            print(level)
+            for mechanism in graphic['mechanisms']:
+                ax[0].barh(
+                mechanism,
+                df_all.loc[[mechanism]]['mean_generate_token'],
+                width,                    
+                xerr=df_all.loc[[mechanism]]['std_generate_token'],
+                label='Geração',
+                color='tab:blue'
+                )
+                ax[0].barh(
+                    mechanism,
+                    df_all.loc[[mechanism]]['mean_verify_token'],
+                    width,
+                    xerr=df_all.loc[[mechanism]]['std_verify_token'],
+                    label='Verificação',
+                    color='tab:orange'
+                )
+
+    ax[0].set_xscale('log')
+    ax[0].set_xlim(0.0001, 1)
+    ax[0].set_title('Tempos de geração e verificação do JWT pós-quântico', size='xx-large')
+
+    ax[0].set_xlabel('Segundos', x=0.5, y=0.1, ha='center', size='xx-large')
+   
+
+    line, label = ax[0].get_legend_handles_labels()         
+    fig.legend(line[0:2], label, loc='upper right', fontsize='x-large') 
+    # fig_size.supylabel('mechanisms')
+    ax[0].tick_params(axis="x", labelsize='xx-large')
+    ax[0].tick_params(axis="y", labelsize='xx-large')
+    
+    # plt.tight_layout()
+    # plt.savefig("times-jwt.svg")
+    # plt.savefig("times-jwt.png")
+    # plt.show()
+
+
+    for graphic in graphics:
+        level = graphic['level']
+        if level == id_level:
+            print(level)
+            for mechanism in graphic['mechanisms']:
+                ax[1].barh(
+                mechanism,
+                df_all.loc[[mechanism]]['size_token'],
+                width,                    
+                color='tab:green'
+            )
+
+    ax[1].set_xlabel('Bytes', x=0.5, y=0.1, ha='center', size='xx-large')
+    # ax.set_xscale('log')
+    # ax.set_xlim(0.0001, 1)
+    ax[1].set_title('Tamanho do JWT pós-quântico', size='xx-large')
+
+    ax[1].tick_params(axis="x", labelsize='xx-large')
+    ax[1].tick_params(axis="y", labelsize='xx-large')
+
+    fig.supylabel('Mecanismos de assinatura digital', size='xx-large')
+
+    plt.tight_layout()
+    # plt.savefig("-jwt.svg")
+    # plt.savefig("times-jwt.png")
+    plt.show()
+
+
+
 def main():
 
     # print(oqs.get_enabled_sig_mechanisms())
@@ -33,7 +110,7 @@ def main():
             level = signature.details['claimed_nist_level']
              
             if level == 1:
-               levels[1].append(mechanism)
+                levels[1].append(mechanism)
             elif level == 2:
                 levels[2].append(mechanism)
             elif level == 3:
@@ -75,9 +152,9 @@ def main():
     width = 0.5
 
     # times graphic
-    fig_times = plt.figure(figsize=(16,9))
+    # fig_times = plt.figure(figsize=(16,16))
 
-    ax = fig_times.subplots(len(graphics)) 
+    fig_times, ax = plt.subplots(len(graphics), 1, figsize=(20,12), gridspec_kw={'height_ratios': [3.5, 1.8, 4, 5]}, layout='constrained') 
 
     ax_index = 0
     for graphic in graphics:
@@ -89,41 +166,48 @@ def main():
                 df_all.loc[[mechanism]]['mean_generate_token'],
                 width,                    
                 xerr=df_all.loc[[mechanism]]['std_generate_token'],
-                label='generate token',
-                color='tab:blue'
+                label='Geração',
+                color='tab:blue',
+                error_kw = {'capsize': 3}
             )
             ax[ax_index].barh(
                 mechanism,
                 df_all.loc[[mechanism]]['mean_verify_token'],
                 width,
                 xerr=df_all.loc[[mechanism]]['std_verify_token'],
-                label='verify token',
-                color='tab:orange'
+                label='Verificação',
+                color='tab:orange',
+                error_kw = {'capsize': 3, 'ecolor': 'k'}
             )
         
         ax[ax_index].set_xscale('log')
-        ax[ax_index].set_xlim(0.0001, 1)
-        ax[ax_index].set_title(f'NIST Level {level}')
+        ax[ax_index].set_xlim(0.00001, 1)
+        ax[ax_index].set_title(f'NIST Level {level}', size='xx-large')
+
+        
+
+        ax[ax_index].tick_params(axis="x", labelsize='xx-large')
+        ax[ax_index].tick_params(axis="y", labelsize='xx-large')
 
         ax_index+=1
 
     
     line, label = ax[0].get_legend_handles_labels()         
-    fig_times.legend(line[0:2], label, loc='upper right') 
+    fig_times.legend(line[0:2], label, loc='outside upper right', fontsize='x-large', ncols=2) 
     
 
-    ax[ax_index-1].set_xlabel('time (seconds)', ha='center', size='large')
-    fig_times.supylabel('mechanisms')
-
-    plt.tight_layout()
+    ax[ax_index-1].set_xlabel('Segundos', x=0.5, y=0.1, ha='center', size='xx-large')
+    # fig_times.supylabel('Mecanismos de assinatura digital', size='x-large')
+    
+    # plt.tight_layout()
     plt.savefig("times-jwt.svg")
+    plt.savefig("times-jwt.png")
     plt.show()
 
-
     # size graphic
-    fig_size = plt.figure(figsize=(16,9))
+    # fig_size = plt.figure(figsize=(16,16))
 
-    ax = fig_size.subplots(len(graphics)) 
+    fig_size, ax = plt.subplots(len(graphics), 1, figsize=(20,12), gridspec_kw={'height_ratios': [3.5, 1.8, 4, 5]}, layout='constrained')
 
     ax_index = 0
     for graphic in graphics:
@@ -134,18 +218,25 @@ def main():
                 mechanism,
                 df_all.loc[[mechanism]]['size_token'],
                 width,                    
-                color='tab:green'
+                color='tab:green',
             )
 
-        ax[ax_index].set_title(f'NIST Level {level}')
+        ax[ax_index].set_title(f'NIST Level {level}', size='xx-large')
         ax[ax_index].set_xlim(0, (max_x.max() // 10000) * 10000 + 10000)
+
+        ax[ax_index].tick_params(axis="x", labelsize='xx-large')
+        ax[ax_index].tick_params(axis="y", labelsize='xx-large')
+        
         ax_index+=1
 
-    ax[ax_index-1].set_xlabel('size (bytes)', x=0.5, y=0.1, ha='center', size='large')
-    fig_size.supylabel('mechanisms')
+    ax[ax_index-1].set_xlabel('Bytes', x=0.5, y=0.1, ha='center', size='xx-large')
     
-    plt.tight_layout()
+
+    # fig_size.supylabel('Mecanismos de assinatura digital', size='xx-large')
+    
+    # plt.tight_layout()
     plt.savefig("sizes-jwt.svg")
+    plt.savefig("sizes-jwt.png")
     plt.show()
 
 if __name__ == '__main__':
