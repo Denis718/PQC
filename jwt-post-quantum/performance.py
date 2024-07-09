@@ -15,20 +15,26 @@ def main():
 
     list_df = []
 
+    print(oqs.get_enabled_sig_mechanisms())
+
     for sig_mechanism in oqs.get_enabled_sig_mechanisms():
-        
+
+        print(sig_mechanism)    
+
         generate_token_times = []
         verify_token_times = []
         size_token = []
         
-        df = pd.DataFrame({'sig_mechanism': [], 'generate_token': [], 'verify_token': []})
+        df = pd.DataFrame({
+            'sig_mechanism': [],
+            'generate_token': [],
+            'verify_token': []
+        })
 
         df['sig_mechanism'] = pd.Series([sig_mechanism] * int(sys.argv[1]))
     
         for i in range(int(sys.argv[1])):
-
-            # print(i, sig_mechanism)
-            
+    
             # payload = None # json empty (payload = {})
             payload = {'iss': 'iss01', 'exp': '1713552059'}
             
@@ -55,11 +61,11 @@ def main():
 
     all_df = pd.concat(list_df)
 
-    all_df = all_df.set_index('sig_mechanism')
+    # all_df = all_df.set_index('sig_mechanism')
 
     print(all_df)
     
-    all_df.to_csv('sig_mechanism_times.csv', index=True)
+    all_df.to_csv('sig_mechanism_times.csv', index=False)
 
     print('File sig_mechanism_times.csv was created')
 
