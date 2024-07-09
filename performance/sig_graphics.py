@@ -120,9 +120,9 @@ def plot_sizes_all(df_all, level):
     ax.legend()
 
     if level:
-        plt.savefig(f'./out/kem_sizes_level_{level}.svg')
+        plt.savefig(f'./out/sig_sizes_level_{level}.svg')
     else:
-        plt.savefig(f'./out/kem_sizes_all_level.svg')
+        plt.savefig(f'./out/sig_sizes_all_level.svg')
 
     plt.show()
 
@@ -245,7 +245,7 @@ def plot_sizes_split_level(df_all, graphics):
     legend = fig.legend(line[0:4], label,  fontsize='x-large') 
     legend.get_frame().set(alpha=1.0)
     
-    plt.savefig('./out/kem_sizes_split_level.svg')
+    plt.savefig('./out/sig_sizes_split_level.svg')
     plt.show()
 
 def main():
