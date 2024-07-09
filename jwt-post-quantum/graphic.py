@@ -3,112 +3,247 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pprint import pprint
 import oqs
+import os
 
-levels = {1: [], 2: [], 3: [], 4: [], 5: []}
+import utils
 
-algorithm = ('Dilithium', 'ML-DSA', 'Falcon', 'SPHINCS+-SHA2', 'SPHINCS+-SHAKE')
+data_times = [(
+    'mean_generate_token',
+    'std_generate_token',
+    'tab:blue',
+    'Generate',
+),(
+    'mean_verify',
+    'std_verify',
+    'tab:orange',
+    'Verify',
+)]
 
-# def count_level():
-#     count = 0
-#     for level in levels:
-#         if levels[level]:
-#             count+=1
-#     return count
+data_sizes = [(
+    'mean_size',
+    'tab:blue',
+    'Size',
+)]
 
-# def what_is_the_level(mechanism):
+def plot_times_by_level(df_all, level, graphics):
+    df_all = utils.one_level(df_all, level, graphics)
+    plot_times_all(df_all, level)
 
-#     for level in levels:
-#         for sig in levels[level]:
-#             if sig == mechanism:
-#                 return int(sig[-1])
+def plot_sizes_by_level(df_all, level, graphics):
+    df_all = utils.one_level(df_all, level, graphics)
+    plot_sizes_all(df_all, level)
 
 
-def by_level(graphics, id_level, width):    
+def plot_times_all(df_all, level):
 
-    fig = plt.figure(figsize=(16,9))
+    y = np.arange(len(df_all.index)-1, -1, -1) 
+    width = 0.3
 
-    ax = fig.subplots(2) 
+    fig, ax = plt.subplots(figsize=(16,9), layout='constrained') 
 
-    for graphic in graphics:
-        level = graphic['level']
-        if level == id_level:
-            print(level)
-            for mechanism in graphic['mechanisms']:
-                ax[0].barh(
-                mechanism,
-                df_all.loc[[mechanism]]['mean_generate_token'],
-                width,                    
-                xerr=df_all.loc[[mechanism]]['std_generate_token'],
-                label='Geração',
-                color='tab:blue'
-                )
-                ax[0].barh(
-                    mechanism,
-                    df_all.loc[[mechanism]]['mean_verify_token'],
-                    width,
-                    xerr=df_all.loc[[mechanism]]['std_verify_token'],
-                    label='Verificação',
-                    color='tab:orange'
-                )
+    for i, d in enumerate(data_times):
+        ax.barh(
+            y - i * width, 
+            [df_all.iloc[j][d[0]] for j in range(len(df_all.index))],
+            width,
+            xerr=[df_all.iloc[j][d[1]] for j in range(len(df_all.index))],
+            label=d[3],
+            color=d[2],
+            error_kw = {'capsize': 2, 'ecolor': 'k'}
+        )
 
-    ax[0].set_xscale('log')
-    ax[0].set_xlim(0.0001, 1)
-    ax[0].set_title('Tempos de geração e verificação do JWT pós-quântico', size='xx-large')
+    ax.set(yticks=y - (len(data_times) - 1) * width / 2, yticklabels=df_all.index.to_list())
 
-    ax[0].set_xlabel('Segundos', x=0.5, y=0.1, ha='center', size='xx-large')
-   
+    # if level:
+    #     ax.set_title(f'NIST Level {level}', size='xx-large')
 
-    line, label = ax[0].get_legend_handles_labels()         
-    fig.legend(line[0:2], label, loc='upper right', fontsize='x-large') 
-    # fig_size.supylabel('mechanisms')
-    ax[0].tick_params(axis="x", labelsize='xx-large')
-    ax[0].tick_params(axis="y", labelsize='xx-large')
+    ax.set_xlabel('Segundos', x=0.5, y=0.1, ha='center', size='xx-large')
+    ax.set_xscale('log')
+    ax.set_xlim(0.000001, 1.0)
+    ax.set_ylim(-1 + width + (width/2), len(df_all.index)-1 + width)
+
+    ax.tick_params(axis="x", labelsize='xx-large')
+    ax.tick_params(axis="y", labelsize='xx-large')
     
-    # plt.tight_layout()
-    # plt.savefig("times-jwt.svg")
-    # plt.savefig("times-jwt.png")
-    # plt.show()
+    ax.legend()
+    
+    if level:
+        plt.savefig(f'./out/sig_times_level_{level}.svg')
+    else:
+        plt.savefig(f'./out/sig_times_all_level.svg')
 
-
-    for graphic in graphics:
-        level = graphic['level']
-        if level == id_level:
-            print(level)
-            for mechanism in graphic['mechanisms']:
-                ax[1].barh(
-                mechanism,
-                df_all.loc[[mechanism]]['size_token'],
-                width,                    
-                color='tab:green'
-            )
-
-    ax[1].set_xlabel('Bytes', x=0.5, y=0.1, ha='center', size='xx-large')
-    # ax.set_xscale('log')
-    # ax.set_xlim(0.0001, 1)
-    ax[1].set_title('Tamanho do JWT pós-quântico', size='xx-large')
-
-    ax[1].tick_params(axis="x", labelsize='xx-large')
-    ax[1].tick_params(axis="y", labelsize='xx-large')
-
-    fig.supylabel('Mecanismos de assinatura digital', size='xx-large')
-
-    plt.tight_layout()
-    # plt.savefig("-jwt.svg")
-    # plt.savefig("times-jwt.png")
     plt.show()
 
+def plot_sizes_all(df_all, level):
 
+    fig, ax = plt.subplots(figsize=(16,9), layout='constrained') 
+
+    y = np.arange(len(df_all.index)-1, -1, -1) 
+
+    width = 0.20
+
+    for i, d in enumerate(data_sizes):
+        ax.barh(
+            y - i * width,
+            [df_all.iloc[j][d[0]] for j in range(len(df_all.index))],
+            width,
+            label=d[2],
+            color=d[1],
+        )
+    
+    ax.set(yticks=y - (len(data_sizes) - 1) * width / 2, yticklabels=df_all.index.to_list())
+
+    # if level:
+    #     ax.set_title(f'NIST Level {level}', size='xx-large')
+
+    ax.set_xlabel('Bytes', x=0.5, y=0.1, ha='center', size='xx-large')
+    ax.set_xscale('log')
+    ax.set_xlim(1, 10000000)
+    ax.set_ylim(-1 + (width*2) +width, len(df_all.index)-1 + (width*2))
+        
+    ax.tick_params(axis="x", labelsize='xx-large')
+    ax.tick_params(axis="y", labelsize='xx-large')
+
+    ax.legend()
+
+    if level:
+        plt.savefig(f'./out/sig_sizes_level_{level}.svg')
+    else:
+        plt.savefig(f'./out/sig_sizes_all_level.svg')
+
+    plt.show()
+
+def plot_times_split_level(df_all, graphics):
+
+    dfs = []
+
+    dfs.append((utils.one_level(df_all, 1, graphics), '1'))
+    dfs.append((utils.one_level(df_all, 2, graphics), '2'))
+    dfs.append((utils.one_level(df_all, 3, graphics), '3'))
+    dfs.append((utils.one_level(df_all, 4, graphics), '4'))
+    dfs.append((utils.one_level(df_all, 5, graphics), '5'))
+
+    fig, ax = plt.subplots(
+        len(graphics),
+        1,
+        sharex=True,
+        figsize=(16,9),
+        gridspec_kw={'height_ratios': [s for s in [ len(g['mechanisms']) for g in graphics]]},
+        layout='constrained'
+    ) 
+
+    ax_index = 0
+    
+    for m in dfs:
+        df=m[0]
+        l=m[1]
+        
+        y = np.arange(len(df.index)-1, -1, -1) 
+        width = 0.3
+
+        if not df.empty: 
+            for i, d in enumerate(data_times):
+                ax[ax_index].barh(
+                    y - i * width, 
+                    [df.iloc[j][d[0]] for j in range(len(df.index))],
+                    width,
+                    xerr=[df.iloc[j][d[1]] for j in range(len(df.index))],
+                    label=d[3],
+                    color=d[2],
+                    error_kw = {'capsize': 2, 'ecolor': 'k'},
+                )
+
+            ax[ax_index].set(yticks=y - (len(data_times) - 1) * width / 2, yticklabels=df.index.to_list())
+
+            ax[ax_index].set_title(f'NIST Level {l}', size='xx-large')
+
+            ax[ax_index].set_xscale('log')
+            ax[ax_index].set_xlim(0.000001, 1.0)
+            ax[ax_index].set_ylim(-1 + width + (width/2), len(df.index)-1 + width)
+
+            ax[ax_index].tick_params(axis="x",  labelsize='xx-large')
+            ax[ax_index].tick_params(axis="y", labelsize='xx-large')
+
+            ax_index+=1
+            
+    line, label = ax[0].get_legend_handles_labels()         
+    legend = fig.legend(line[0:3], label,  fontsize='x-large') 
+    legend.get_frame().set(alpha=1.0)
+
+    ax[ax_index-1].set_xlabel('Segundos', x=0.5, y=0.1, ha='center', size='xx-large')
+
+    plt.savefig('./out/sig_times_split_level.svg')
+    plt.show()
+
+def plot_sizes_split_level(df_all, graphics):
+
+    dfs = []
+
+    dfs.append((utils.one_level(df_all, 1, graphics), '1'))
+    dfs.append((utils.one_level(df_all, 2, graphics), '2'))
+    dfs.append((utils.one_level(df_all, 3, graphics), '3'))
+    dfs.append((utils.one_level(df_all, 4, graphics), '4'))
+    dfs.append((utils.one_level(df_all, 5, graphics), '5'))
+
+    fig, ax = plt.subplots(
+        len(graphics),
+        1,
+        sharex=True,
+        figsize=(16,9),
+        gridspec_kw={'height_ratios': [s for s in [ len(g['mechanisms']) for g in graphics]]},
+        layout='constrained'
+    ) 
+
+    ax_index = 0
+
+    for m in dfs:
+        df=m[0]
+        l=m[1]
+ 
+        y = np.arange(len(df.index)-1, -1, -1) 
+        width = 0.4
+        
+        if not df.empty: 
+            for i, d in enumerate(data_sizes):
+                ax[ax_index].barh(
+                    y - i * width,
+                    [df.iloc[j][d[0]] for j in range(len(df.index))],
+                    width,
+                    label=d[2],
+                    color=d[1],
+                )
+
+            ax[ax_index].set(yticks=y - (len(data_sizes) - 1) * width / 2, yticklabels=df.index.to_list())
+
+            ax[ax_index].set_title(f'NIST Level {l}', size='xx-large')
+
+            ax[ax_index].set_xscale('log')
+            ax[ax_index].set_xlim(1,10000000)
+            ax[ax_index].set_ylim(-1 + width + (width/2), len(df.index)-1 + width)
+
+            ax[ax_index].tick_params(axis="x", labelsize='xx-large')
+            ax[ax_index].tick_params(axis="y", labelsize='xx-large')
+
+            ax_index+=1
+
+    ax[ax_index-1].set_xlabel('Bytes', x=0.5, y=0.1, ha='center', size='xx-large')
+             
+    line, label = ax[0].get_legend_handles_labels()         
+    legend = fig.legend(line[0:4], label,  fontsize='x-large') 
+    legend.get_frame().set(alpha=1.0)
+    
+    plt.savefig('./out/sig_sizes_split_level.svg')
+    plt.show()
 
 def main():
 
-    # print(oqs.get_enabled_sig_mechanisms())
-    # print(oqs.get_supported_sig_mechanisms())
-    
+    levels = {1: [], 2: [], 3: [], 4: [], 5: []}
+
     for mechanism in oqs.get_enabled_sig_mechanisms():
         with oqs.Signature(mechanism) as signature:
 
             level = signature.details['claimed_nist_level']
-             
+                
             if level == 1:
                 levels[1].append(mechanism)
             elif level == 2:
@@ -119,125 +254,69 @@ def main():
                 levels[4].append(mechanism)
             elif level == 5:
                 levels[5].append(mechanism)
-        
-
-    # print(levels)
-
+    
+    if not os.path.exists('./out'):
+        os.makedirs('./out')
+  
     df = pd.read_csv('sig_mechanism_times.csv')
     
-    df_all = pd.DataFrame()
+    df_all = pd.DataFrame(index=oqs.get_enabled_sig_mechanisms())
 
     df_all['mean_generate_token'] = pd.Series(df.groupby('sig_mechanism').mean()['generate_token'])
     df_all['std_generate_token'] = pd.Series(df.groupby('sig_mechanism').std()['generate_token'])
     
-    df_all['mean_verify_token'] = pd.Series(df.groupby('sig_mechanism').mean()['verify_token'])
-    df_all['std_verify_token'] = pd.Series(df.groupby('sig_mechanism').std()['verify_token'])
-    
-    df_all['size_token'] = pd.Series(df.groupby('sig_mechanism').mean()['size_token'])
+    df_all['mean_verify'] = pd.Series(df.groupby('sig_mechanism').mean()['verify_token'])
+    df_all['std_verify'] = pd.Series(df.groupby('sig_mechanism').std()['verify_token'])
 
-    max_x = pd.Series(df.groupby('sig_mechanism').max()['size_token'])
+    df_all['mean_size'] = pd.Series(df.groupby('sig_mechanism').mean()['size_token'])
     
-    # print(df_all.all)
-
+    print(df_all)
 
     graphics = []
-    
     for level in levels:
         if levels[level]:
             graphics.append({'level': level, 'mechanisms': levels[level]})
 
-    # print(graphics)
+    plot_times_all(df_all, None)
+    plot_times_by_level(df_all, 1, graphics)
+    plot_times_by_level(df_all, 2, graphics)
+    plot_times_by_level(df_all, 3, graphics)
+    plot_times_by_level(df_all, 4, graphics)
+    plot_times_by_level(df_all, 5, graphics)
 
-
-    width = 0.5
-
-    # times graphic
-    # fig_times = plt.figure(figsize=(16,16))
-
-    fig_times, ax = plt.subplots(len(graphics), 1, figsize=(20,12), gridspec_kw={'height_ratios': [3.5, 1.8, 4, 5]}, layout='constrained') 
-
-    ax_index = 0
-    for graphic in graphics:
-        level = graphic['level']
-        for mechanism in graphic['mechanisms']:
-            
-            ax[ax_index].barh(
-                mechanism,
-                df_all.loc[[mechanism]]['mean_generate_token'],
-                width,                    
-                xerr=df_all.loc[[mechanism]]['std_generate_token'],
-                label='Geração',
-                color='tab:blue',
-                error_kw = {'capsize': 3}
-            )
-            ax[ax_index].barh(
-                mechanism,
-                df_all.loc[[mechanism]]['mean_verify_token'],
-                width,
-                xerr=df_all.loc[[mechanism]]['std_verify_token'],
-                label='Verificação',
-                color='tab:orange',
-                error_kw = {'capsize': 3, 'ecolor': 'k'}
-            )
-        
-        ax[ax_index].set_xscale('log')
-        ax[ax_index].set_xlim(0.00001, 1)
-        ax[ax_index].set_title(f'NIST Level {level}', size='xx-large')
-
-        
-
-        ax[ax_index].tick_params(axis="x", labelsize='xx-large')
-        ax[ax_index].tick_params(axis="y", labelsize='xx-large')
-
-        ax_index+=1
-
+    plot_times_split_level(df_all, graphics)
     
-    line, label = ax[0].get_legend_handles_labels()         
-    fig_times.legend(line[0:2], label, loc='outside upper right', fontsize='x-large', ncols=2) 
+    plot_sizes_all(df_all, None)
+    plot_sizes_by_level(df_all, 1, graphics)
+    plot_sizes_by_level(df_all, 2, graphics)
+    plot_sizes_by_level(df_all, 3, graphics)
+    plot_sizes_by_level(df_all, 4, graphics)
+    plot_sizes_by_level(df_all, 5, graphics)
+
+    plot_sizes_split_level(df_all, graphics)
+
+
+    # df_sizes = pd.read_csv('sig_mechanism_sizes.csv')
+
+    # print(df_sizes)
     
+    # df_all_sizes = pd.DataFrame(index=oqs.get_enabled_sig_mechanisms())
 
-    ax[ax_index-1].set_xlabel('Segundos', x=0.5, y=0.1, ha='center', size='xx-large')
-    # fig_times.supylabel('Mecanismos de assinatura digital', size='x-large')
-    
-    # plt.tight_layout()
-    plt.savefig("times-jwt.svg")
-    plt.savefig("times-jwt.png")
-    plt.show()
+    # df_all_sizes['public_key'] = pd.Series(df_sizes.groupby('sig_mechanism').mean()['length_public_key'])
+    # df_all_sizes['secret_key'] = pd.Series(df_sizes.groupby('sig_mechanism').mean()['length_secret_key'])
+    # df_all_sizes['signature'] = pd.Series(df_sizes.groupby('sig_mechanism').mean()['length_signature'])
+ 
+    # print(df_all_sizes)
 
-    # size graphic
-    # fig_size = plt.figure(figsize=(16,16))
+    # plot_sizes_all(df_all_sizes, None)
+    # plot_sizes_by_level(df_all_sizes, 1, graphics)
+    # plot_sizes_by_level(df_all_sizes, 2, graphics)
+    # plot_sizes_by_level(df_all_sizes, 3, graphics)
+    # plot_sizes_by_level(df_all_sizes, 4, graphics)
+    # plot_sizes_by_level(df_all_sizes, 5, graphics)
 
-    fig_size, ax = plt.subplots(len(graphics), 1, figsize=(20,12), gridspec_kw={'height_ratios': [3.5, 1.8, 4, 5]}, layout='constrained')
+    # plot_sizes_split_level(df_all_sizes, graphics)
 
-    ax_index = 0
-    for graphic in graphics:
-        level = graphic['level']
-        for mechanism in graphic['mechanisms']:
-
-            ax[ax_index].barh(
-                mechanism,
-                df_all.loc[[mechanism]]['size_token'],
-                width,                    
-                color='tab:green',
-            )
-
-        ax[ax_index].set_title(f'NIST Level {level}', size='xx-large')
-        ax[ax_index].set_xlim(0, (max_x.max() // 10000) * 10000 + 10000)
-
-        ax[ax_index].tick_params(axis="x", labelsize='xx-large')
-        ax[ax_index].tick_params(axis="y", labelsize='xx-large')
-        
-        ax_index+=1
-
-    ax[ax_index-1].set_xlabel('Bytes', x=0.5, y=0.1, ha='center', size='xx-large')
-    
-
-    # fig_size.supylabel('Mecanismos de assinatura digital', size='xx-large')
-    
-    # plt.tight_layout()
-    plt.savefig("sizes-jwt.svg")
-    plt.savefig("sizes-jwt.png")
-    plt.show()
 
 if __name__ == '__main__':
     main()
