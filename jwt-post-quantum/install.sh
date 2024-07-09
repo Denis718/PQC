@@ -41,7 +41,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
 python3 -m venv venv
 source venv/bin/activate
 python3 -m ensurepip --upgrade
-
+pip install -r requirements.txt
 
 # Clone the repository
 # Configure and install the wrapper
@@ -49,7 +49,6 @@ python3 -m ensurepip --upgrade
 git clone --depth=1 --branch ${LIBOQS_PYTHON_TAG} https://github.com/open-quantum-safe/liboqs-python
 cd liboqs-python
 pip install .
-
 
 # Run the examples
 # python3 liboqs-python/examples/kem.py
