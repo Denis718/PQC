@@ -1,7 +1,11 @@
 test.py
 jwt/*.key
 jwt/__pycache__
+__pycache__
 venv/
 *.csv
 *.svg
 *.png
+liboqs/
+liboqs-python/
+out/
