@@ -65,9 +65,9 @@ def main():
 
     print(all_df)
     
-    all_df.to_csv('sig_mechanism_times.csv', index=False)
+    all_df.to_csv('jwt_times_sizes.csv', index=False)
 
-    print('File sig_mechanism_times.csv was created')
+    print('File jwt_times_sizes.csv was created')
 
 if __name__ == '__main__':
     main()
