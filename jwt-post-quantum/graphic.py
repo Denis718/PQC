@@ -68,9 +68,9 @@ def plot_times_all(df_all, level):
     ax.legend()
     
     if level:
-        plt.savefig(f'./out/sig_times_level_{level}.svg')
+        plt.savefig(f'./out/jwt_times_level_{level}.svg')
     else:
-        plt.savefig(f'./out/sig_times_all_level.svg')
+        plt.savefig(f'./out/jwt_times_all_level.svg')
 
     plt.show()
 
@@ -107,9 +107,9 @@ def plot_sizes_all(df_all, level):
     ax.legend()
 
     if level:
-        plt.savefig(f'./out/sig_sizes_level_{level}.svg')
+        plt.savefig(f'./out/jwt_sizes_level_{level}.svg')
     else:
-        plt.savefig(f'./out/sig_sizes_all_level.svg')
+        plt.savefig(f'./out/jwt_sizes_all_level.svg')
 
     plt.show()
 
@@ -172,7 +172,7 @@ def plot_times_split_level(df_all, graphics):
 
     ax[ax_index-1].set_xlabel('Segundos', x=0.5, y=0.1, ha='center', size='xx-large')
 
-    plt.savefig('./out/sig_times_split_level.svg')
+    plt.savefig('./out/jwt_times_split_level.svg')
     plt.show()
 
 def plot_sizes_split_level(df_all, graphics):
@@ -232,7 +232,7 @@ def plot_sizes_split_level(df_all, graphics):
     legend = fig.legend(line[0:4], label,  fontsize='x-large') 
     legend.get_frame().set(alpha=1.0)
     
-    plt.savefig('./out/sig_sizes_split_level.svg')
+    plt.savefig('./out/jwt_sizes_split_level.svg')
     plt.show()
 
 def main():
@@ -258,7 +258,7 @@ def main():
     if not os.path.exists('./out'):
         os.makedirs('./out')
   
-    df = pd.read_csv('sig_mechanism_times.csv')
+    df = pd.read_csv('jwt_times_sizes.csv')
     
     df_all = pd.DataFrame(index=oqs.get_enabled_sig_mechanisms())
 
@@ -294,29 +294,6 @@ def main():
     plot_sizes_by_level(df_all, 5, graphics)
 
     plot_sizes_split_level(df_all, graphics)
-
-
-    # df_sizes = pd.read_csv('sig_mechanism_sizes.csv')
-
-    # print(df_sizes)
-    
-    # df_all_sizes = pd.DataFrame(index=oqs.get_enabled_sig_mechanisms())
-
-    # df_all_sizes['public_key'] = pd.Series(df_sizes.groupby('sig_mechanism').mean()['length_public_key'])
-    # df_all_sizes['secret_key'] = pd.Series(df_sizes.groupby('sig_mechanism').mean()['length_secret_key'])
-    # df_all_sizes['signature'] = pd.Series(df_sizes.groupby('sig_mechanism').mean()['length_signature'])
- 
-    # print(df_all_sizes)
-
-    # plot_sizes_all(df_all_sizes, None)
-    # plot_sizes_by_level(df_all_sizes, 1, graphics)
-    # plot_sizes_by_level(df_all_sizes, 2, graphics)
-    # plot_sizes_by_level(df_all_sizes, 3, graphics)
-    # plot_sizes_by_level(df_all_sizes, 4, graphics)
-    # plot_sizes_by_level(df_all_sizes, 5, graphics)
-
-    # plot_sizes_split_level(df_all_sizes, graphics)
-
 
 if __name__ == '__main__':
     main()
