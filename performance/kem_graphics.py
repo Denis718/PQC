@@ -57,7 +57,8 @@ def plot_times_all(df_all, level):
     y = np.arange(len(df_all.index)-1, -1, -1) 
     width = 0.3
 
-    fig, ax = plt.subplots(figsize=(16,9), layout='constrained') 
+    fig, ax = plt.subplots(figsize=(16,9))
+    # , layout='constrained') 
 
     for i, d in enumerate(data_times):
         ax.barh(
@@ -83,7 +84,10 @@ def plot_times_all(df_all, level):
     ax.tick_params(axis="x", labelsize='xx-large')
     ax.tick_params(axis="y", labelsize='xx-large')
     
-    ax.legend()
+    ax.legend(fontsize='x-large')
+
+    plt.tight_layout()
+    ax.set_position([0.25, 0.07, 0.735, 0.92])
     
     if level:
         plt.savefig(f'./out/kem_times_level_{level}.svg')
@@ -94,7 +98,8 @@ def plot_times_all(df_all, level):
 
 def plot_sizes_all(df_all, level):
 
-    fig, ax = plt.subplots(figsize=(16,9), layout='constrained') 
+    fig, ax = plt.subplots(figsize=(16,9))
+    # , layout='constrained') 
 
     y = np.arange(len(df_all.index)-1, -1, -1) 
 
@@ -122,7 +127,10 @@ def plot_sizes_all(df_all, level):
     ax.tick_params(axis="x", labelsize='xx-large')
     ax.tick_params(axis="y", labelsize='xx-large')
 
-    ax.legend()
+    ax.legend(fontsize='x-large')
+
+    plt.tight_layout()
+    ax.set_position([0.25, 0.07, 0.735, 0.92])
 
     if level:
         plt.savefig(f'./out/kem_sizes_level_{level}.svg')
