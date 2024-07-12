@@ -39,7 +39,8 @@ def plot_times_all(df_all, level):
     y = np.arange(len(df_all.index)-1, -1, -1) 
     width = 0.3
 
-    fig, ax = plt.subplots(figsize=(16,9), layout='constrained') 
+    fig, ax = plt.subplots(figsize=(16,9))
+    # , layout='constrained') 
 
     for i, d in enumerate(data_times):
         ax.barh(
@@ -65,8 +66,11 @@ def plot_times_all(df_all, level):
     ax.tick_params(axis="x", labelsize='xx-large')
     ax.tick_params(axis="y", labelsize='xx-large')
     
-    ax.legend()
+    ax.legend(fontsize='x-large')
     
+    plt.tight_layout
+    ax.set_position([0.25, 0.07, 0.735, 0.92])
+
     if level:
         plt.savefig(f'./out/jwt_times_level_{level}.svg')
     else:
@@ -74,13 +78,15 @@ def plot_times_all(df_all, level):
 
     plt.show()
 
+
 def plot_sizes_all(df_all, level):
 
-    fig, ax = plt.subplots(figsize=(16,9), layout='constrained') 
+    fig, ax = plt.subplots(figsize=(16,9))
+    # , layout='constrained') 
 
     y = np.arange(len(df_all.index)-1, -1, -1) 
 
-    width = 0.20
+    width = 0.30
 
     for i, d in enumerate(data_sizes):
         ax.barh(
@@ -99,13 +105,16 @@ def plot_sizes_all(df_all, level):
     ax.set_xlabel('Bytes', x=0.5, y=0.1, ha='center', size='xx-large')
     ax.set_xscale('log')
     ax.set_xlim(1, 10000000)
-    ax.set_ylim(-1 + (width*2) +width, len(df_all.index)-1 + (width*2))
+    ax.set_ylim(-1 + (width*2), len(df_all.index)-1 + width)
         
     ax.tick_params(axis="x", labelsize='xx-large')
     ax.tick_params(axis="y", labelsize='xx-large')
 
-    ax.legend()
-
+    # ax.legend()
+    
+    plt.tight_layout()
+    ax.set_position([0.25, 0.07, 0.735, 0.92])
+    
     if level:
         plt.savefig(f'./out/jwt_sizes_level_{level}.svg')
     else:
@@ -228,9 +237,9 @@ def plot_sizes_split_level(df_all, graphics):
 
     ax[ax_index-1].set_xlabel('Bytes', x=0.5, y=0.1, ha='center', size='xx-large')
              
-    line, label = ax[0].get_legend_handles_labels()         
-    legend = fig.legend(line[0:4], label,  fontsize='x-large') 
-    legend.get_frame().set(alpha=1.0)
+    # line, label = ax[0].get_legend_handles_labels()         
+    # legend = fig.legend(line[0:4], label,  fontsize='x-large') 
+    # legend.get_frame().set(alpha=1.0)
     
     plt.savefig('./out/jwt_sizes_split_level.svg')
     plt.show()
