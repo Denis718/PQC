@@ -86,8 +86,10 @@ def plot_times_all(df_all, level):
     
     if level:
         plt.savefig(f'./out/sig_times_level_{level}.svg')
+        plt.savefig(f'./out/sig_times_level_{level}.png')
     else:
         plt.savefig(f'./out/sig_times_all_level.svg')
+        plt.savefig(f'./out/sig_times_all_level.png')
 
     plt.show()
 
@@ -129,8 +131,10 @@ def plot_sizes_all(df_all, level):
 
     if level:
         plt.savefig(f'./out/sig_sizes_level_{level}.svg')
+        plt.savefig(f'./out/sig_sizes_level_{level}.png')
     else:
         plt.savefig(f'./out/sig_sizes_all_level.svg')
+        plt.savefig(f'./out/sig_sizes_all_level.png')
 
     plt.show()
 
@@ -194,6 +198,7 @@ def plot_times_split_level(df_all, graphics):
     ax[ax_index-1].set_xlabel('Segundos', x=0.5, y=0.1, ha='center', size='xx-large')
 
     plt.savefig('./out/sig_times_split_level.svg')
+    plt.savefig('./out/sig_times_split_level.png')
     plt.show()
 
 def plot_sizes_split_level(df_all, graphics):
@@ -254,6 +259,7 @@ def plot_sizes_split_level(df_all, graphics):
     legend.get_frame().set(alpha=1.0)
     
     plt.savefig('./out/sig_sizes_split_level.svg')
+    plt.savefig('./out/sig_sizes_split_level.png')
     plt.show()
 
 def main():
