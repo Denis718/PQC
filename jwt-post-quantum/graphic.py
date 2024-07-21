@@ -21,7 +21,7 @@ data_times = [(
 
 data_sizes = [(
     'mean_size',
-    'tab:blue',
+    'tab:green',
     'Size',
 )]
 
@@ -60,7 +60,7 @@ def plot_times_all(df_all, level):
 
     ax.set_xlabel('Segundos', x=0.5, y=0.1, ha='center', size='xx-large')
     ax.set_xscale('log')
-    ax.set_xlim(0.000001, 1.0)
+    ax.set_xlim(0.00001, 1.0)
     ax.set_ylim(-1 + width + (width/2), len(df_all.index)-1 + width)
 
     ax.tick_params(axis="x", labelsize='xx-large')
@@ -73,8 +73,10 @@ def plot_times_all(df_all, level):
 
     if level:
         plt.savefig(f'./out/jwt_times_level_{level}.svg')
+        plt.savefig(f'./out/jwt_times_level_{level}.png')
     else:
         plt.savefig(f'./out/jwt_times_all_level.svg')
+        plt.savefig(f'./out/jwt_times_all_level.png')
 
     plt.show()
 
@@ -104,7 +106,7 @@ def plot_sizes_all(df_all, level):
 
     ax.set_xlabel('Bytes', x=0.5, y=0.1, ha='center', size='xx-large')
     ax.set_xscale('log')
-    ax.set_xlim(1, 10000000)
+    ax.set_xlim(1, 100000)
     ax.set_ylim(-1 + (width*2), len(df_all.index)-1 + width)
         
     ax.tick_params(axis="x", labelsize='xx-large')
@@ -117,8 +119,10 @@ def plot_sizes_all(df_all, level):
     
     if level:
         plt.savefig(f'./out/jwt_sizes_level_{level}.svg')
+        plt.savefig(f'./out/jwt_sizes_level_{level}.png')
     else:
         plt.savefig(f'./out/jwt_sizes_all_level.svg')
+        plt.savefig(f'./out/jwt_sizes_all_level.png')
 
     plt.show()
 
@@ -167,7 +171,7 @@ def plot_times_split_level(df_all, graphics):
             ax[ax_index].set_title(f'NIST Level {l}', size='xx-large')
 
             ax[ax_index].set_xscale('log')
-            ax[ax_index].set_xlim(0.000001, 1.0)
+            ax[ax_index].set_xlim(0.00001, 1.0)
             ax[ax_index].set_ylim(-1 + width + (width/2), len(df.index)-1 + width)
 
             ax[ax_index].tick_params(axis="x",  labelsize='xx-large')
@@ -182,6 +186,7 @@ def plot_times_split_level(df_all, graphics):
     ax[ax_index-1].set_xlabel('Segundos', x=0.5, y=0.1, ha='center', size='xx-large')
 
     plt.savefig('./out/jwt_times_split_level.svg')
+    plt.savefig('./out/jwt_times_split_level.png')
     plt.show()
 
 def plot_sizes_split_level(df_all, graphics):
@@ -227,7 +232,7 @@ def plot_sizes_split_level(df_all, graphics):
             ax[ax_index].set_title(f'NIST Level {l}', size='xx-large')
 
             ax[ax_index].set_xscale('log')
-            ax[ax_index].set_xlim(1,10000000)
+            ax[ax_index].set_xlim(1, 100000)
             ax[ax_index].set_ylim(-1 + width + (width/2), len(df.index)-1 + width)
 
             ax[ax_index].tick_params(axis="x", labelsize='xx-large')
@@ -242,6 +247,7 @@ def plot_sizes_split_level(df_all, graphics):
     # legend.get_frame().set(alpha=1.0)
     
     plt.savefig('./out/jwt_sizes_split_level.svg')
+    plt.savefig('./out/jwt_sizes_split_level.png')
     plt.show()
 
 def main():
