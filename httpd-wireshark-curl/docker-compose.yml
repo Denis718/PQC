@@ -24,7 +24,7 @@ services:
       - shared-volume:/opt/httpd/cacert
     networks:
       net0:
-        ipv4_address: 172.18.1.4
+        ipv4_address: 172.18.1.2
     depends_on:
       - oqs-wireshark
     environment:
@@ -41,7 +41,7 @@ services:
       - shared-volume:/cacert_curl
     networks:
       net0:
-        ipv4_address: 172.18.1.5
+        ipv4_address: 172.18.1.3
     depends_on:
       - oqs-wireshark
       - oqs-httpd
